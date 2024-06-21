@@ -3,56 +3,287 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Videoplayer.Arindom.in</title>
-    <link rel="stylesheet" href="styles.css">
+    <title>Data Entry Software</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 1500vh;
+            background-color: pink;
+        }
+        .container {
+            width: 60%;
+            margin: 20px auto;
+            padding: 20px;
+            background: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .form-group {
+            margin-bottom: 15px;
+        }
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+        }
+        .form-group input, .form-group textarea {
+            width: calc(100% - 20px);
+            padding: 8px;
+            box-sizing: border-box;
+        }
+        button {
+            padding: 10px;
+            background: #007bff;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+        button:hover {
+            background: #0056b3;
+        }
+        #submit-button {
+            width: 100%;
+            margin-top: 10px;
+        }
+        table {
+            width: 100%;
+            margin-top: 20px;
+            border-collapse: collapse;
+        }
+        table, th, td {
+            border: 1px solid #ddd;
+        }
+        th, td {
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #search {
+            margin-bottom: 20px;
+            padding: 10px;
+            width: calc(100% - 20px);
+            font-size: 16px;
+        }
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
 </head>
 <body>
+    <div class="container" id="form-page">
+        
+
+
+      <center> <h1><font color="#17202A">𝐀𝐑𝐈𝐍𝐃𝐎𝐌 & CO </font><font color="RED"> (𝐀𝐒) </font></center></h1>
+        <center><img src="as.png" width="75"/></center>
 
 
 
-
-    <div class="container">
- <h1><p><font color="#17202A">𝐀𝐑𝐈𝐍𝐃𝐎𝐌 & CO </font><font color="RED"> (𝐀𝐒) </font></p> <h1>
-
-        <h3><font color="FFA700">Vide</font><font color="F112D0">oPlayer </font></h3>
-
-
-
-
-
-        <input type="file" id="videoInput" accept="video/*">
-        <button id="uploadButton" onclick="uploadVideo()">Upload Video</button>
-        <button id="newUploadButton" onclick="newUpload()">New Upload</button>
-        <div id="videoContainer" class="hidden">
-            <video id="videoPlayer" controls></video>
-            <a id="downloadButton" href="#" download="video.mp4">Download Video</a>
+        <div class="form-group">
+            <label for="name">Name / Page No:</label>
+            <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+            <label for="mobile">Due Amount::</label>
+            <input type="text" id="mobile" required>
+        </div>
+        <div class="form-group">
+            <label for="address">Address:</label>
+            <textarea id="address" rows="4" required></textarea>
+        </div>
+        <button id="submit-button" onclick="submitData()">Submit</button>
+        <div id="saved-data">
+            <h2>Saved Data</h2>
+            <input type="text" id="search" placeholder="Search by name/page, due amount, or address..." onkeyup="searchData()">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name / Page No</th>
+                    <th>Due Amount</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="data-table-body">
+                </tbody>
+            </table>
+            <div class="action-buttons">
+                <button onclick="openForm()">New Entry</button>
+                <button onclick="clearAllData()">Clear All Data</button>
+            </div>
         </div>
     </div>
-    <div class="container" id="previousVideoContainer">
-        <h2>Previous Uploads</h2>
-        <div id="previousVideos"></div>
+
+    <div class="container" id="table-page" style="display: none;">
+        <h2>Entered Data</h2>
+        <input type="text" id="search" placeholder="Search by name, mobile number, or address..." onkeyup="searchData()">
+        <table>
+            <thead>
+                <tr>
+                    <th>Name</th>
+                    <th>Mobile Number</th>
+                    <th>Address</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody id="data-table-body">
+            </tbody>
+        </table>
+        <button onclick="openForm()">New Entry</button>
+        <button onclick="clearData()">Clear Data</button>
     </div>
 
+    <script>
+        function loadData() {
+            var tableBody = document.getElementById('data-table-body');
+            tableBody.innerHTML = '';
+            var entries = JSON.parse(localStorage.getItem('entries')) || [];
+            entries.forEach(function(entry, index) {
+                var newRow = document.createElement('tr');
 
+                var nameCell = document.createElement('td');
+                nameCell.textContent = entry.name;
+                newRow.appendChild(nameCell);
 
+                var mobileCell = document.createElement('td');
+                mobileCell.textContent = entry.mobile;
+                newRow.appendChild(mobileCell);
 
- <footer><center>
-        <h2>Contact Us</h2>
+                var addressCell = document.createElement('td');
+                addressCell.textContent = entry.address;
+                newRow.appendChild(addressCell);
 
-        <div class="contact-info">
-            <p>West Bangala, Purba Bardhaman, India </p>
-            
-            <p>Email: arindoms6428@gmail.com</p>
+                var actionCell = document.createElement('td');
+                var editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.onclick = function() { editEntry(index); };
+                actionCell.appendChild(editButton);
+                newRow.appendChild(actionCell);
 
-<!-- Button to open email client -->
-<button onclick="window.location.href='mailto:arindoms6428@gmail.com'">Contacts Email</button>
- <p>&copy; 2024 Create This  Website Arindom saha.</p
+                tableBody.appendChild(newRow);
+            });
+        }
 
-        </div>
-<footer></center>
+        function submitData() {
+            var name = document.getElementById('name').value;
+            var mobile = document.getElementById('mobile').value;
+            var address = document.getElementById('address').value;
 
+            if (name && mobile && address) {
+                var entries = JSON.parse(localStorage.getItem('entries')) || [];
+                var newEntry = { name: name, mobile: mobile, address: address };
+                entries.push(newEntry);
+                localStorage.setItem('entries', JSON.stringify(entries));
 
+                loadData();
+                document.getElementById('form-page').style.display = 'block';
+                document.getElementById('table-page').style.display = 'none';
 
-    <script src="script.js"></script>
+                // Clear form
+                document.getElementById('name').value = '';
+                document.getElementById('mobile').value = '';
+                document.getElementById('address').value = '';
+            } else {
+                alert('Please fill in all fields.');
+            }
+        }
+
+        function openForm() {
+            document.getElementById('form-page').style.display = 'block';
+            document.getElementById('table-page').style.display = 'none';
+        }
+
+        function clearData() {
+            var password = prompt('Enter password to clear data:');
+            if (password === '2026') {
+                localStorage.removeItem('entries');
+                loadData();
+            } else {
+                alert('Incorrect password!');
+            }
+        }
+
+        function clearAllData() {
+            var password = prompt('Enter password to clear all data:');
+            if (password === '2026') {
+                localStorage.removeItem('entries');
+                loadData();
+            } else {
+                alert('Incorrect password!');
+            }
+        }
+
+        function editEntry(index) {
+            var password = prompt('Enter password to edit data:');
+            if (password === '2026') {
+                var entries = JSON.parse(localStorage.getItem('entries'));
+                var entry = entries[index];
+
+                document.getElementById('name').value = entry.name;
+                document.getElementById('mobile').value = entry.mobile;
+                document.getElementById('address').value = entry.address;
+
+                // Remove the entry being edited
+                entries.splice(index, 1);
+                localStorage.setItem('entries', JSON.stringify(entries));
+
+                openForm();
+            } else {
+                alert('Incorrect password!');
+            }
+        }
+
+        function searchData() {
+            var query = document.getElementById('search').value.toLowerCase();
+            var entries = JSON.parse(localStorage.getItem('entries')) || [];
+            var filteredEntries = entries.filter(function(entry) {
+                return entry.name.toLowerCase().includes(query) || 
+                       entry.mobile.toLowerCase().includes(query) || 
+                       entry.address.toLowerCase().includes(query);
+            });
+            var tableBody = document.getElementById('data-table-body');
+            tableBody.innerHTML = '';
+            filteredEntries.forEach(function(entry, index) {
+                var newRow = document.createElement('tr');
+
+                var nameCell = document.createElement('td');
+                nameCell.textContent = entry.name;
+                newRow.appendChild(nameCell);
+
+                var mobileCell = document.createElement('td');
+                mobileCell.textContent = entry.mobile;
+                newRow.appendChild(mobileCell);
+
+                var addressCell = document.createElement('td');
+                addressCell.textContent = entry.address;
+                newRow.appendChild(addressCell);
+
+                var actionCell = document.createElement('td');
+                var editButton = document.createElement('button');
+                editButton.textContent = 'Edit';
+                editButton.onclick = function() { editEntry(index); };
+                actionCell.appendChild(editButton);
+                newRow.appendChild(actionCell);
+
+                tableBody.appendChild(newRow);
+            });
+        }
+
+        window.onload = function() {
+            loadData();
+        }
+    </script>
 </body>
 </html>
